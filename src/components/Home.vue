@@ -2,16 +2,16 @@
 <div class="api">
 <div class="container-fluid px-5">
   <div class="row">
-    <ul class="list-group col-md-2 mt-5 pt-3">
-      <li :class="['list-group-item', { 'active': activeItem === category.id } ]" v-for="(category, index) in movie_list.genres" :key="index" @click="loadCard(category.id)">{{category.name}}</li>
+    <ul class="list-group col-md-2 mt-5 pt-3" v-if="movie_list">
+      <li :class="['list-group-item', { 'active': activeItem === category.id } ]" v-for="(category, index) in movie_list.genres" :key="index" @click="loadCard(category.id)">{{category.name|| ''}}</li>
     </ul>
     <div class="col-md-10">
-      <div class="d-flex flex-wrap align-content-start justify-content-around mt-5 pt-3" v-if="movie_list_id === null">
+      <div class="d-flex flex-wrap align-content-start justify-content-around my-5 pt-3" v-if="movie_list_id === null && movie_popular">
         <div class="card mb-3" v-for="(movie, i) in movie_popular.results" :key="i">
           <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title">
           <div class="card-body">
             <h5 class="card-title">{{movie.title || 'Пусто'}}</h5>
-            <p class="card-text">{{ (movie.overview.substring(0,200) + "...") || ''}}</p>
+            <p class="card-text">{{ (movie.overview.substring(0,100) + "...") || ''}}</p>
             <router-link :to="{ name: 'movie', params: {id: movie.id}}" class="btn btn-primary">Подробнее</router-link>
           </div>
         </div>
@@ -22,7 +22,7 @@
           <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title">
           <div class="card-body">
             <h5 class="card-title">{{movie.title || 'Пусто'}}</h5>
-            <p class="card-text">{{ (movie.overview.substring(0,200) + "...") || ''}}</p>
+            <p class="card-text">{{ (movie.overview.substring(0,100) + "...") || ''}}</p>
             <router-link :to="{ name: 'movie', params: {id: movie.id}}" class="btn btn-primary">Подробнее</router-link>
           </div>
         </div>
@@ -99,6 +99,13 @@ h5 {
 
 .card {
   width: 28%;
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.card a {
+  position: absolute;
+  bottom: 30px;
 }
 
 .card img {
