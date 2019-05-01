@@ -1,51 +1,60 @@
 <template>
-  <div class="api">
-    <h4>https://www.themoviedb.org/settings/api</h4>
-    <h5>api_key=4349e092aadf87a170f4f5dd9344058b</h5>
-    <div class="movie_list">
-      <p v-for="(category, index) in movie_list.genres" :key="index" @click="loadCard(category.id)">{{category.name}}</p>
-    </div>
-    <hr>
-      <div class="movie_list_id" v-if="movie_list_id === null">
-        <div class="movie_item" v-for="(movie, i) in movie_popular.results" :key="i">
+<div class="api">
+<div class="container-fluid px-5">
+  <div class="row">
+    <ul class="list-group col-md-2 mt-5 pt-3">
+      <li :class="['list-group-item', { 'active': activeItem === category.id } ]" v-for="(category, index) in movie_list.genres" :key="index" @click="loadCard(category.id)">{{category.name}}</li>
+    </ul>
+    <div class="col-md-10">
+      <div class="d-flex flex-wrap align-content-start justify-content-around mt-5 pt-3" v-if="movie_list_id === null">
+        <div class="card mb-3" v-for="(movie, i) in movie_popular.results" :key="i">
           <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title">
-          <h2 >{{movie.title || 'Пусто'}}</h2>
-          <h5>{{ (movie.overview.substring(0,100) + "...") || ''}}</h5>
-          <router-link :to="{ name: 'movie', params: {id: movie.id} }">Подробнее</router-link>
+          <div class="card-body">
+            <h5 class="card-title">{{movie.title || 'Пусто'}}</h5>
+            <p class="card-text">{{ (movie.overview.substring(0,200) + "...") || ''}}</p>
+            <router-link :to="{ name: 'movie', params: {id: movie.id}}" class="btn btn-primary">Подробнее</router-link>
+          </div>
         </div>
       </div>
-    <hr>
-    <hr>
-    <h1 v-if="movie_list_id">{{movie_list_id.name}}</h1>
-    <hr>
-    <div class="movie_list_id" v-if="movie_list_id">
-      <div class="movie_item" v-for="(movie, i) in movie_list_id.items" :key="i">
-        <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title">
-        <h2 >{{movie.title || 'Пусто'}}</h2>
-        <h5>{{(movie.overview.substring(0,100) + "...") || ''}}</h5>
-        <router-link :to="{ name: 'movie', params: {id: movie.id} }">Подробнее</router-link>
+      <h1 v-if="movie_list_id" class="text-center my-2">{{movie_list_id.name}}</h1>
+      <div class="d-flex flex-wrap align-content-start justify-content-around" v-if="movie_list_id">
+        <div class="card mb-3" v-for="(movie, i) in movie_list_id.items" :key="i">
+          <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title">
+          <div class="card-body">
+            <h5 class="card-title">{{movie.title || 'Пусто'}}</h5>
+            <p class="card-text">{{ (movie.overview.substring(0,200) + "...") || ''}}</p>
+            <router-link :to="{ name: 'movie', params: {id: movie.id}}" class="btn btn-primary">Подробнее</router-link>
+          </div>
+        </div>
+        <div class="mt-5" v-if="movie_list_id.items.length === 0">
+          <h3 class="text-center">Фильмы отсутсвуют.</h3>
+        </div>
       </div>
     </div>
   </div>
+</div>
+<div class="loading" v-if="loading">
+  <h2>Загрузка...</h2>
+</div>
+</div>
 </template>
 
 <script>
 import axios from "axios";
-
 export default {
   name: 'Home',
-  data () {
+  data() {
     return {
-      api_url: 'https://api.themoviedb.org/',
       api_key: '?api_key=4349e092aadf87a170f4f5dd9344058b',
       movie_list: '',
+      activeItem: null,
       movie_popular: null,
-      movie_list_id: null
+      movie_list_id: null,
+      loading: false
     }
   },
   mounted() {
     axios
-      // .get(this.api_url + '3/movie/550?' + this.api_key)
       .get('https://api.themoviedb.org/3/genre/movie/list' + this.api_key)
       .then(response => (this.movie_list = response.data));
     axios
@@ -54,49 +63,48 @@ export default {
   },
   methods: {
     loadCard(id) {
+      this.loading = true
       axios
-      // .get(this.api_url + '3/movie/550?' + this.api_key)
         .get('https://api.themoviedb.org/3/list/' + id + this.api_key)
-        .then(response => (this.movie_list_id = response.data));
+        .then(response => {
+          this.movie_list_id = response.data,
+          this.activeItem = id,
+          this.loading = false
+        });
     }
   }
 }
 </script>
 
 <style scoped>
-h4, h5  {
+h4,
+h5 {
   text-align: center;
 }
-.movie_list {
-  display: flex;
-}
-.movie_list p {
-  margin: 5px 10px;
-}
 
-
-.movie_list_id {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.movie_item {
-  border: 1px solid #aaa;
-  border-radius: 10px;
-  width: 23%;
-  margin-bottom: 15px;
-  min-height: 500px;
-  padding-bottom: 15px;
-  box-sizing: border-box;
-}
-
-.movie_item img {
+.loading {
   width: 100%;
-  height: 300px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  background-color: rgba(0,0,0, 0.7);
+  color: #fff;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  transition: 0.3s;
+}
+
+.card {
+  width: 28%;
+}
+
+.card img {
+  width: 100%;
+  height: 400px;
   object-fit: cover;
   object-position: top;
 }
-
 </style>
