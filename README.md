@@ -1,5 +1,7 @@
 # themoviedb api
 
+autor [portfolio](http://gkhabada.h1n.ru)
+
 > A Vue.js project
 
 ## Build Setup
