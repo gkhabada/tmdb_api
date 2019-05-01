@@ -1,4 +1,4 @@
-# test_api
+# themoviedb api
 
 > A Vue.js project
 
