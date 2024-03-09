@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
-import Movie from '@/components/Movie'
+import HomeComponent from '../components/HomeComponent.vue'
+import MovieComponent from '../components/MovieComponent.vue'
 
 Vue.use(Router)
 
@@ -10,11 +10,11 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: HomeComponent
     }, {
       path: '/movie/:id',
       name: 'movie',
-      component: Movie
+      component: MovieComponent
     }
   ],
   mode: 'history'
