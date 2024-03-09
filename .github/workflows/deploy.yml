@@ -1,4 +1,4 @@
-name: Deploy Cryptocompare
+name: Deploy tmbd
 
 on:
   push:
